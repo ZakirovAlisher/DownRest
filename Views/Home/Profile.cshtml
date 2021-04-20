@@ -1,0 +1,93 @@
+﻿
+@using DownRest.Models
+@model DownRest.Models.User
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>@Model.UserName</h2>
+
+<img src="~/Files/@Model.avatar" width="200" height="200">
+
+
+
+<h3>Выберите файл для загрузки</h3>
+@using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <input type="file" name="upload" />
+    <br>
+    <input type="submit" class="btn btn-success" value="Загрузить" />
+}
+
+
+@using (Html.BeginForm("UpdateProfile", "Home", FormMethod.Post))
+{@Html.AntiForgeryToken()
+
+@Html.HiddenFor(model => model.Id)
+
+
+<br />
+if (Request.QueryString["error"] != null)
+{
+<div class="jumbotron bg-danger p-3 m-3" style="color:white">
+    @Request.QueryString["error"]
+
+</div>
+
+}
+@Html.LabelFor(model => model.balance, "Balance")
+<br />
+@Html.Editor("balance") 
+<br />
+@Html.ValidationMessageFor(model => model.balance, "", new { @class = "text-danger" })
+
+
+
+<div class="editor-label"><b>Skills</b></div>
+foreach (Skill c in ViewBag.Skills)
+{
+    <input type="checkbox" name="selectedCourses" value="@c.Id"
+           @foreach (Skill b in Model.Skills) { if (c.Id == b.Id) { Write("checked"); break; } } />
+
+    @c.Name
+    <br />
+}
+
+
+
+
+<input type="submit" class="btn btn-success mt-2" value="Add" />
+}
+<h3>Accepted responses</h3>
+@foreach (Project proj in ViewBag.Projects)
+{
+
+    foreach (Response r in ViewBag.Responses)
+    {
+        if (r.Id == proj.AcceptedBy && r.UserId == Model.Id)
+        {
+
+
+            <div class="card mt-3 " style="border: 1px solid grey">
+                <div class="card-body">
+                    <h5 class="card-title">@proj.Name</h5>
+
+                    <h6 class="card-subtitle mb-2 text-muted">by @proj.User.UserName</h6>
+
+                    <a class="btn btn-success" href="/Home/DetailsProject/@proj.Id">Details</a>
+
+
+                </div>
+                <div class="card-footer">
+                    Reward: @proj.Reward $ <br>
+
+                </div>
+            </div>
+
+            break;
+        }
+    }
+
+
+
+}

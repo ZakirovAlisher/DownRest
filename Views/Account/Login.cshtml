@@ -1,0 +1,32 @@
+﻿@model DownRest.Models.LoginModel
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Вход на сайт</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        @Html.ValidationSummary()
+        <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+        <p>
+            <label>Email</label><br />
+            @Html.TextBoxFor(model => model.Email, new { @Value = ViewBag.log })
+        </p>
+        <p>
+            <label>Пароль</label><br />
+            @Html.PasswordFor(model => model.Password, new { @Value = ViewBag.pass })
+        </p>
+        <p><button type="submit">Войти</button></p>
+
+
+
+
+       
+    </div>
+}

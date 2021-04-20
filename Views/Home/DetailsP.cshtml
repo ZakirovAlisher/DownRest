@@ -1,0 +1,139 @@
+﻿@model DownRest.Models.Project
+
+
+
+@using DownRest.Models
+@{
+    ViewBag.Title = "Details";
+}
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+ 
+
+
+<script>
+
+    $(function () {
+        $("#dialog1").dialog({
+            autoOpen: false
+        });
+
+        $("#opener").click(function () {
+            $("#dialog1").dialog('open');
+        });
+    });
+    $(document).ready(function () {
+
+        $.ajaxSetup({ cache: false });
+
+        $(".viewDialog").on("click", function (e) {
+            e.preventDefault();
+
+            $("<div></div>")
+                .addClass("dialog")
+                .appendTo("body")
+                .dialog({
+                    title: $(this).attr("data-dialog-title"),
+                    close: function () { $(this).remove() },
+                    modal: true
+                })
+                .load(this.href);
+        });
+    });
+</script>
+<div>
+   
+
+    <div>
+        <h4>Project  @Model.Name</h4>
+        <div class="card mt-3 " style="
+
+                  ">
+            <div class="card-body row">
+
+                <div class="col-3">
+                    <img src="~/Files/@Model.User.avatar" width="200" height="200" style="border: 2px green solid">
+                </div>
+
+                <div class="col-9">
+                    <h5 class="card-title pr-4"> @Model.User.UserName</h5>
+                    
+                    <h6 class="card-subtitle mb-2 pr-4"> @Model.Description</h6>
+                </div>
+
+
+            </div>
+            <div class="card-footer">
+                Reward:  @Model.Reward $
+
+            </div>
+        
+        </div>
+        <hr />
+        <dl class="dl-horizontal">
+           
+            <br>
+            
+             
+            <br>
+        </dl>
+    </div>
+
+
+    @if (Model.AcceptedBy == 0)  
+    {
+        @Html.ActionLink("Create Response", "Create", "Responses", new { ProjectId = Model.Id }, new { @class = "viewDialog btn btn-success", data_dialog_title = "Создание модели" })
+    }
+    @foreach (var item in Model.Responses)
+    {
+
+
+
+<div class="card mt-3 " style="
+                 @if (Model.AcceptedBy == item.Id) {
+                     Write("background-color: lightgreen;");
+                 }
+                  ">
+    <div class="card-body row">
+
+        <div class="col-3">
+            <img src="~/Files/@item.User.avatar" width="200" height="200" style="border: 2px green solid">
+        </div>
+
+        <div class="col-9">
+            <h5 class="card-title pr-4">@item.User.UserName</h5>
+
+            <h6 class="card-subtitle mb-2 pr-4">  @item.Text</h6>
+        </div>
+
+
+    </div>
+    <div class="card-footer">
+        @foreach (Skill sk in item.User.Skills)
+        {
+           <button class="btn btn-warning mr-2"> @sk.Name </button>
+        }
+
+    </div>
+    <div class="card-footer">
+        @if (User.Identity.Name == Model.User.Email && Model.AcceptedBy == 0)
+        {
+            @Html.ActionLink("Accept", "AcceptResponse", new { id = item.Id, userId = item.User.Id, projId = Model.Id }, new { @class = "btn btn-success" })
+        }
+
+    </div>
+</div>
+
+
+
+
+
+
+    }
+
+
+
+</div>

@@ -1,0 +1,84 @@
+﻿@model IEnumerable<DownRest.Models.Category>
+@using DownRest.Models
+@{
+    ViewBag.Title = "Home Page";
+}
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+
+@Html.ActionLink("Create New", "Create", "Projects", new { }, new { @class = "viewDialog btn btn-primary my-3", data_dialog_title = "Создание модели" })
+
+
+
+<script>
+
+    $(function () {
+        $("#dialog1").dialog({
+            autoOpen: false
+        });
+
+        $("#opener").click(function () {
+            $("#dialog1").dialog('open');
+        });
+    });
+    $(document).ready(function () {
+
+        $.ajaxSetup({ cache: false });
+
+        $(".viewDialog").on("click", function (e) {
+            e.preventDefault();
+
+            $("<div></div>")
+                .addClass("dialog")
+                .appendTo("body")
+                .dialog({
+                    title: $(this).attr("data-dialog-title"),
+                    close: function () { $(this).remove() },
+                    modal: true
+                })
+                .load(this.href);
+        });
+    });
+</script>
+@foreach (var item in Model)
+{
+
+
+    if (item.Projects.Count > 0)
+    {<h3 class="text-center mt-2"><b>Category: @item.Name</b></h3>
+
+    foreach (Project proj in item.Projects)
+    {
+
+        if (proj.AcceptedBy == 0)
+        {
+
+
+
+            <div class="card mt-3 " style="border: 1px solid grey">
+                <div class="card-body">
+                    <h5 class="card-title">@proj.Name</h5>
+
+                    <h6 class="card-subtitle mb-2 text-muted">by @proj.User.UserName</h6>
+
+                    <a class="btn btn-success" href="/Home/DetailsProject/@proj.Id">Details</a>
+
+
+                </div>
+                <div class="card-footer">
+                    Reward: @proj.Reward $ <br>
+
+                </div>
+            </div>
+
+
+
+            }
+
+        }
+    }
+
+}
